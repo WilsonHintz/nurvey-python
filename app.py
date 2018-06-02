@@ -1,6 +1,17 @@
-from flask import Flask
+from flask import Flask, jsonify
 from datetime import datetime
+from PIL import Image
+import numpy as np
+
 app = Flask(__name__)
+tasks = [
+    {
+        'id': 1,
+        'title': 'Gaston alonso',
+        'description': u'persona, tagarna, alto petardo',
+        'done': False
+    }
+]
 
 @app.route('/')
 def homepage():
@@ -12,6 +23,10 @@ def homepage():
 
     <img src="https://i.imgur.com/nxQphlD.jpg">
     """.format(time=the_time)
+
+@app.route('/dollyPuto', methods=['GET'])
+def rest():
+    return jsonify({'tasks': tasks})
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=True)
