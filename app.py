@@ -1,7 +1,5 @@
 from flask import Flask, jsonify
 from datetime import datetime
-from PIL import Image
-import numpy as np
 
 app = Flask(__name__)
 tasks = [
