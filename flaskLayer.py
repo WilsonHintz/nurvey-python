@@ -28,7 +28,7 @@ def homepage():
 @app.route('/dollyPuto', methods=['GET'])
 def rest():
     return jsonify({'tasks': tasks})
-    
+
 @app.route('/postjson', methods=['POST'])
 def postJsonHandler():
     print(request.is_json)
@@ -80,4 +80,4 @@ if __name__ == "__main__":
     # start the web server
     print("* Starting web service...")
     loadModel()
-        app.run(debug=True, threaded=False, use_reloader=True)
+    app.run(debug=True, threaded=False, use_reloader=True)
