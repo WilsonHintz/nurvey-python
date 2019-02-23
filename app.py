@@ -1,11 +1,11 @@
 import datetime
 import numpy
+import loadModel
 from flask import Flask
 from flask import request, jsonify
-from keras.models import model_from_json
 
 app = Flask(__name__)
-loaded_model = None
+loaded_model = loadModel.loadModel.get_loadedmodel()
 tasks = [
     {
         'id': 1,
@@ -17,7 +17,7 @@ tasks = [
 
 @app.route('/')
 def homepage():
-    the_time = datetime.now().strftime("%A, %d %b %Y %l:%M %p")
+    the_time = datetime.datetime.now().strftime("%A, %d %b %Y %l:%M %p")
 
     return """
     <h1>Hello heroku</h1>
@@ -65,20 +65,20 @@ def categoriaNSE(nivel):
         7: "AB"
     }.get(nivel, "error")
 
-def loadModel():
-    json_file = open('./models/modelNoBin.json', 'r')
-    loaded_model_json = json_file.read()
-    json_file.close()
-    global loaded_model
-    loaded_model = model_from_json(loaded_model_json)
-    # load weights into new model
-    loaded_model.load_weights("./models/modelNoBin.h5")
-
-    print("Loaded model from disk")
+# def loadModel():
+#     json_file = open('./models/modelNoBin.json', 'r')
+#     loaded_model_json = json_file.read()
+#     json_file.close()
+#     global loaded_model
+#     loaded_model = model_from_json(loaded_model_json)
+#     # load weights into new model
+#     loaded_model.load_weights("./models/modelNoBin.h5")
+#
+#     print("Loaded model from disk")
 
 
 if __name__ == "__main__":
     # start the web server
     print("* Starting web service...")
-    loadModel()
+    # loadModel()
     app.run(debug=True, threaded=False, use_reloader=True)
