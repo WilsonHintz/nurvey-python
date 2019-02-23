@@ -5,8 +5,30 @@ from keras.models import model_from_json
 
 app = Flask(__name__)
 loaded_model = None
+tasks = [
+    {
+        'id': 1,
+        'title': 'Gaston alonso',
+        'description': u'persona, tagarna, alto petardo',
+        'done': False
+    }
+]
 
+@app.route('/')
+def homepage():
+    the_time = datetime.now().strftime("%A, %d %b %Y %l:%M %p")
 
+    return """
+    <h1>Hello heroku</h1>
+    <p>It is currently {time}.</p>
+
+    <img src="https://i.imgur.com/nxQphlD.jpg">
+    """.format(time=the_time)
+
+@app.route('/dollyPuto', methods=['GET'])
+def rest():
+    return jsonify({'tasks': tasks})
+    
 @app.route('/postjson', methods=['POST'])
 def postJsonHandler():
     print(request.is_json)
@@ -43,13 +65,13 @@ def categoriaNSE(nivel):
     }.get(nivel, "error")
 
 def loadModel():
-    json_file = open('./models/model.json', 'r')
+    json_file = open('./models/modelNoBin.json', 'r')
     loaded_model_json = json_file.read()
     json_file.close()
     global loaded_model
     loaded_model = model_from_json(loaded_model_json)
     # load weights into new model
-    loaded_model.load_weights("./models/model.h5")
+    loaded_model.load_weights("./models/modelNoBin.h5")
 
     print("Loaded model from disk")
 
@@ -58,4 +80,4 @@ if __name__ == "__main__":
     # start the web server
     print("* Starting web service...")
     loadModel()
-    app.run(debug=True, threaded=False, use_reloader=True)
+        app.run(debug=True, threaded=False, use_reloader=True)
