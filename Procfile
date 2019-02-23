@@ -1,1 +1,1 @@
-web: gunicorn flasklayer:app --log-file=-
+web: waitress-serve —port=$PORT flasklayer:app
