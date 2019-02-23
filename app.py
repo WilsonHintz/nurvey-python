@@ -1,11 +1,11 @@
 import datetime
 import numpy
-import loadModel
+from loadModel import loadModel
 from flask import Flask
 from flask import request, jsonify
 
 app = Flask(__name__)
-loaded_model = loadModel.loadModel.get_loadedmodel()
+loaded_model = None
 tasks = [
     {
         'id': 1,
@@ -14,6 +14,7 @@ tasks = [
         'done': False
     }
 ]
+
 
 @app.route('/')
 def homepage():
@@ -26,9 +27,11 @@ def homepage():
     <img src="https://i.imgur.com/nxQphlD.jpg">
     """.format(time=the_time)
 
+
 @app.route('/dollyPuto', methods=['GET'])
 def rest():
     return jsonify({'tasks': tasks})
+
 
 @app.route('/postjson', methods=['POST'])
 def postJsonHandler():
@@ -38,8 +41,7 @@ def postJsonHandler():
 
     dataset = numpy.fromstring(content['x'], sep=",")
     dataset2 = numpy.vstack([dataset, dataset])
-    global loaded_model
-    salida = loaded_model.predict(dataset2[:, 0:24])
+    salida = loaded_model.predict(dataset2[:, 0:14])
 
     print("")
     print("salida")
@@ -81,4 +83,5 @@ if __name__ == "__main__":
     # start the web server
     print("* Starting web service...")
     # loadModel()
+    loaded_model = loadModel.get_loadedmodel()
     app.run(debug=True, threaded=False, use_reloader=True)
