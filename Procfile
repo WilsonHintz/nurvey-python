@@ -1,1 +1,1 @@
-web: waitress-serve —port=$PORT flasklayer:app
+web: gunicorn nurvey-python.flasklayer:app --log-file=-
