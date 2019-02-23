@@ -1,1 +1,1 @@
-web: gunicorn nurvey-python.flasklayer:app --log-file=-
+web: gunicorn flasklayer:app --log-file=-
