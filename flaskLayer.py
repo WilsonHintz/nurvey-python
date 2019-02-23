@@ -58,4 +58,4 @@ if __name__ == "__main__":
     # start the web server
     print("* Starting web service...")
     loadModel()
-    app.run(host='0.0.0.0', port=5000, debug=True, threaded=False, use_reloader=True)
+    app.run(debug=True, threaded=False, use_reloader=True)
