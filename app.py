@@ -5,7 +5,6 @@ from flask import Flask
 from flask import request, jsonify
 
 app = Flask(__name__)
-loaded_model = None
 tasks = [
     {
         'id': 1,
@@ -41,7 +40,30 @@ def postJsonHandler():
 
     dataset = numpy.fromstring(content['x'], sep=",")
     dataset2 = numpy.vstack([dataset, dataset])
+    #global loaded_model
     salida = loaded_model.predict(dataset2[:, 0:14])
+
+    print("")
+    print("salida")
+    i, j = numpy.unravel_index(salida.argmax(), salida.shape)
+    print("categoria")
+    categoriaNSE(j)
+    print(categoriaNSE(j))
+    data = {'Categoria': categoriaNSE(j)}
+
+    #return 'Categoria ' + categoriaNSE(j)
+    return jsonify(data), 200
+
+@app.route('/postjsonModel2', methods=['POST'])
+def postJson2Handler():
+    print(request.is_json)
+    content = request.get_json()
+    print(content['x'])
+
+    dataset = numpy.fromstring(content['x'], sep=",")
+    dataset2 = numpy.vstack([dataset, dataset])
+    #global loaded_model2
+    salida = loaded_model2.predict(dataset2[:, 0:24])
 
     print("")
     print("salida")
@@ -83,5 +105,10 @@ if __name__ == "__main__":
     # start the web server
     print("* Starting web service...")
     # loadModel()
+    global loaded_model
     loaded_model = loadModel.get_loadedmodel()
-    app.run(debug=True, threaded=False, use_reloader=True)
+    global loaded_model2
+    loaded_model2 = loadModel.get_loadedmodel2()
+
+    app.run(host='0.0.0.0', port=5000, debug=False, threaded=False)
+
