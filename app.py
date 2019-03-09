@@ -17,8 +17,8 @@ tasks = [
 
 @app.route('/')
 def homepage():
-    the_time = datetime.datetime.now().strftime("%A, %d %b %Y %l:%M %p")
-
+    #the_time = datetime.datetime.now().strftime("%A, %d %b %Y %l:%M %p")
+    the_time = datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
     return """
     <h1>Hello heroku</h1>
     <p>It is currently {time}.</p>
@@ -88,17 +88,6 @@ def categoriaNSE(nivel):
         6: "C1",
         7: "AB"
     }.get(nivel, "error")
-
-# def loadModel():
-#     json_file = open('./models/modelNoBin.json', 'r')
-#     loaded_model_json = json_file.read()
-#     json_file.close()
-#     global loaded_model
-#     loaded_model = model_from_json(loaded_model_json)
-#     # load weights into new model
-#     loaded_model.load_weights("./models/modelNoBin.h5")
-#
-#     print("Loaded model from disk")
 
 
 if __name__ == "__main__":
