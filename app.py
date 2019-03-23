@@ -28,7 +28,7 @@ def homepage():
 
 @app.route('/main')
 def mainpage():
-    return render_template("lolero.html")
+    return render_template("index.html")
 
 @app.route('/object', methods=['GET'])
 def rest():
