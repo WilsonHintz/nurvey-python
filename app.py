@@ -8,9 +8,9 @@ app = Flask(__name__)
 tasks = [
     {
         'id': 1,
-        'title': 'Gaston alonso',
-        'description': u'persona, tagarna, alto petardo',
-        'done': False
+        'title': 'Json de prueba',
+        'description': u'objeto',
+        'done': True
     }
 ]
 
@@ -19,13 +19,14 @@ def homepage():
     the_time = datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
 
     return """
-    <h1>Hello heroku</h1>
-    <p>It is currently {time}.</p>
+    <h1>Neural Server</h1>
+    <p>Hour: {time}.</p>
+    <p>2 models serving</p>
 
     <img src="https://i.imgur.com/nxQphlD.jpg">
     """.format(time=the_time)
 
-@app.route('/dollyPuto', methods=['GET'])
+@app.route('/object', methods=['GET'])
 def rest():
     return jsonify({'tasks': tasks})
 
@@ -98,4 +99,5 @@ if __name__ == "__main__":
     loaded_model2 = loadModel.get_loadedmodel2()
 
     app.run(host='0.0.0.0', port=5000, debug=False, threaded=False)
+
 
