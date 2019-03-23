@@ -3,7 +3,6 @@ import numpy
 from loadModel import loadModel
 from flask import Flask
 from flask import request, jsonify
-import logging
 
 app = Flask(__name__)
 tasks = [
@@ -14,16 +13,10 @@ tasks = [
         'done': False
     }
 ]
-logging.basicConfig(filename="logname.log",
-                    filemode='a',
-                    format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
-                    datefmt='%H:%M:%S',
-                    level=logging.DEBUG)
 
 @app.route('/')
 def homepage():
     the_time = datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
-    logging.info("get in the front")
 
     return """
     <h1>Hello heroku</h1>
@@ -31,10 +24,6 @@ def homepage():
 
     <img src="https://i.imgur.com/nxQphlD.jpg">
     """.format(time=the_time)
-
-
-
-
 
 @app.route('/dollyPuto', methods=['GET'])
 def rest():
@@ -107,8 +96,6 @@ if __name__ == "__main__":
     loaded_model = loadModel.get_loadedmodel()
     global loaded_model2
     loaded_model2 = loadModel.get_loadedmodel2()
-
-
 
     app.run(host='0.0.0.0', port=5000, debug=False, threaded=False)
 
