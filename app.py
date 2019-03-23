@@ -1,7 +1,7 @@
 import datetime
 import numpy
 from loadModel import loadModel
-from flask import Flask
+from flask import Flask, render_template
 from flask import request, jsonify
 
 app = Flask(__name__)
@@ -25,6 +25,10 @@ def homepage():
 
     <img src="https://i.imgur.com/nxQphlD.jpg">
     """.format(time=the_time)
+
+@app.route('/main')
+def mainpage():
+    return render_template('lolero.html')
 
 @app.route('/object', methods=['GET'])
 def rest():
