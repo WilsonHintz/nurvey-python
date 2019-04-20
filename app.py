@@ -52,6 +52,15 @@ def rest():
 
 @app.route('/postjson', methods=['POST'])
 def postJsonHandler():
+    return neuralWrapper(loaded_model, 14)
+
+
+@app.route('/postjsonModel2', methods=['POST'])
+def postJson2Handler():
+    return neuralWrapper(loaded_model2, 24)
+
+
+def neuralWrapper(model, vectorLength):
     global responses
     print("===========")
     print(request.is_json)
@@ -61,7 +70,7 @@ def postJsonHandler():
 
     dataset = numpy.fromstring(content['x'], sep=",")
     dataset2 = numpy.vstack([dataset, dataset])
-    salida = loaded_model.predict(dataset2[:, 0:14])
+    salida = model.predict(dataset2[:, 0:vectorLength])
 
     print("salida")
     i, j = numpy.unravel_index(salida.argmax(), salida.shape)
@@ -70,65 +79,7 @@ def postJsonHandler():
     # RESPONSE BUILD ======
     network_output["date"] = datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
     network_output["result"] = str(categoriaNSE(j))
-    network_output["networkName"] = "NSE vector 14"
-    network_output["networkVersion"] = "1"
-
-    loggerFile.OUTPUT(str(network_output))
-    responses += 1
-    print("total inf: " + str(responses))
-    print("===========")
-
-    return json.dumps(network_output, indent=4), 200
-
-
-@app.route('/postjsonModel2', methods=['POST'])
-def postJson2Handler():
-    global responses
-    print("===========")
-    print(request.is_json)
-    content = request.get_json()
-    print(content['x'])
-
-    dataset = numpy.fromstring(content['x'], sep=",")
-    dataset2 = numpy.vstack([dataset, dataset])
-    salida = loaded_model2.predict(dataset2[:, 0:24])
-
-    print("salida")
-    i, j = numpy.unravel_index(salida.argmax(), salida.shape)
-    print("categoria" + categoriaNSE(j))
-
-    # RESPONSE BUILD ======
-    network_output["date"] = datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
-    network_output["result"] = str(categoriaNSE(j))
-    network_output["networkName"] = "NSE vector 24"
-    network_output["networkVersion"] = "1"
-
-    loggerFile.OUTPUT(str(network_output))
-    responses += 1
-    print("total inf: " + str(responses))
-    print("===========")
-
-    return json.dumps(network_output, indent=4), 200
-
-def neuralWrapper(modelName, vectorLength):
-    global responses
-    print("===========")
-    print(request.is_json)
-    content = request.get_json()
-    print(content['x'])
-
-    dataset = numpy.fromstring(content['x'], sep=",")
-    dataset2 = numpy.vstack([dataset, dataset])
-    salida = modelName.predict(dataset2[:, 0:vectorLength])
-
-    print("salida")
-    i, j = numpy.unravel_index(salida.argmax(), salida.shape)
-    print("categoria" + categoriaNSE(j))
-
-    # RESPONSE BUILD ======
-    network_output["date"] = datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
-    network_output["result"] = str(categoriaNSE(j))
-    network_output["networkName"] = "NSE vector 24"
+    network_output["networkName"] = "NSE vector " + str(vectorLength)
     network_output["networkVersion"] = "1"
 
     loggerFile.OUTPUT(str(network_output))
@@ -153,13 +104,13 @@ def categoriaNSE(nivel):
 
 
 if __name__ == "__main__":
-    # start the web server
-    print("* Starting web service...")
     # loadModel()
     global loaded_model
     loaded_model = loadModel.get_loadedmodel()
     global loaded_model2
     loaded_model2 = loadModel.get_loadedmodel2()
+
+    # Log information
     loggerFile.INFO("------------")
     loggerFile.INFO("Server Start")
     loggerFile.INFO("------------")
