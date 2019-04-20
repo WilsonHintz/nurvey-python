@@ -1,80 +1,93 @@
 import datetime
 import numpy
 from loadModel import loadModel
-from flask import Flask
+from loggerFile import loggerFile
+from flask import Flask, render_template
 from flask import request, jsonify
+import json
 
 app = Flask(__name__)
 tasks = [
     {
         'id': 1,
-        'title': 'Gaston alonso',
-        'description': u'persona, tagarna, alto petardo',
-        'done': False
+        'title': 'Json de prueba',
+        'description': u'objeto',
+        'done': True
     }
 ]
+
+network_output = {
+        "date": "2018-11-11",
+        "result": "Json de prueba",
+        "networkName": "default",
+        "networkVersion": "1"
+}
+
+responses = 0
 
 
 @app.route('/')
 def homepage():
-    the_time = datetime.datetime.now().strftime("%A, %d %b %Y %l:%M %p")
+    the_time = datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
 
     return """
-    <h1>Hello heroku</h1>
-    <p>It is currently {time}.</p>
+    <h1>Neural Server</h1>
+    <p>Hour: {time}.</p>
+    <p>2 models serving</p>
+    <p>Responses until now: {RespCount}</p>
 
     <img src="https://i.imgur.com/nxQphlD.jpg">
-    """.format(time=the_time)
+    """.format(time=the_time, RespCount=responses)
 
 
-@app.route('/dollyPuto', methods=['GET'])
+@app.route('/main')
+def mainpage():
+    return render_template("index.html")
+
+
+@app.route('/object', methods=['GET'])
 def rest():
     return jsonify({'tasks': tasks})
 
 
 @app.route('/postjson', methods=['POST'])
 def postJsonHandler():
-    print(request.is_json)
-    content = request.get_json()
-    print(content['x'])
+    return neuralWrapper(loaded_model, 14)
 
-    dataset = numpy.fromstring(content['x'], sep=",")
-    dataset2 = numpy.vstack([dataset, dataset])
-    #global loaded_model
-    salida = loaded_model.predict(dataset2[:, 0:14])
-
-    print("")
-    print("salida")
-    i, j = numpy.unravel_index(salida.argmax(), salida.shape)
-    print("categoria")
-    categoriaNSE(j)
-    print(categoriaNSE(j))
-    data = {'Categoria': categoriaNSE(j)}
-
-    #return 'Categoria ' + categoriaNSE(j)
-    return jsonify(data), 200
 
 @app.route('/postjsonModel2', methods=['POST'])
 def postJson2Handler():
+    return neuralWrapper(loaded_model2, 24)
+
+
+def neuralWrapper(model, vectorLength):
+    global responses
+    print("===========")
     print(request.is_json)
     content = request.get_json()
     print(content['x'])
+    loggerFile.INPUT(str(content['x']))
 
     dataset = numpy.fromstring(content['x'], sep=",")
     dataset2 = numpy.vstack([dataset, dataset])
-    #global loaded_model2
-    salida = loaded_model2.predict(dataset2[:, 0:24])
+    salida = model.predict(dataset2[:, 0:vectorLength])
 
-    print("")
     print("salida")
     i, j = numpy.unravel_index(salida.argmax(), salida.shape)
-    print("categoria")
-    categoriaNSE(j)
-    print(categoriaNSE(j))
-    data = {'Categoria': categoriaNSE(j)}
+    print("categoria" + categoriaNSE(j))
 
-    #return 'Categoria ' + categoriaNSE(j)
-    return jsonify(data), 200
+    # RESPONSE BUILD ======
+    network_output["date"] = datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+    network_output["result"] = str(categoriaNSE(j))
+    network_output["networkName"] = "NSE vector " + str(vectorLength)
+    network_output["networkVersion"] = "1"
+
+    loggerFile.OUTPUT(str(network_output))
+    responses += 1
+    print("total inf: " + str(responses))
+    print("===========")
+
+    return json.dumps(network_output, indent=4), 200
 
 
 def categoriaNSE(nivel):
@@ -89,26 +102,19 @@ def categoriaNSE(nivel):
         7: "AB"
     }.get(nivel, "error")
 
-# def loadModel():
-#     json_file = open('./models/modelNoBin.json', 'r')
-#     loaded_model_json = json_file.read()
-#     json_file.close()
-#     global loaded_model
-#     loaded_model = model_from_json(loaded_model_json)
-#     # load weights into new model
-#     loaded_model.load_weights("./models/modelNoBin.h5")
-#
-#     print("Loaded model from disk")
-
 
 if __name__ == "__main__":
-    # start the web server
-    print("* Starting web service...")
     # loadModel()
     global loaded_model
     loaded_model = loadModel.get_loadedmodel()
     global loaded_model2
     loaded_model2 = loadModel.get_loadedmodel2()
 
+    # Log information
+    loggerFile.INFO("------------")
+    loggerFile.INFO("Server Start")
+    loggerFile.INFO("------------")
+
     app.run(host='0.0.0.0', port=5000, debug=False, threaded=False)
+
 
