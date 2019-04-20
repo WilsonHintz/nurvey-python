@@ -110,6 +110,34 @@ def postJson2Handler():
 
     return json.dumps(network_output, indent=4), 200
 
+def neuralWrapper(modelName, vectorLength):
+    global responses
+    print("===========")
+    print(request.is_json)
+    content = request.get_json()
+    print(content['x'])
+
+    dataset = numpy.fromstring(content['x'], sep=",")
+    dataset2 = numpy.vstack([dataset, dataset])
+    salida = modelName.predict(dataset2[:, 0:vectorLength])
+
+    print("salida")
+    i, j = numpy.unravel_index(salida.argmax(), salida.shape)
+    print("categoria" + categoriaNSE(j))
+
+    # RESPONSE BUILD ======
+    network_output["date"] = datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+    network_output["result"] = str(categoriaNSE(j))
+    network_output["networkName"] = "NSE vector 24"
+    network_output["networkVersion"] = "1"
+
+    loggerFile.OUTPUT(str(network_output))
+    responses += 1
+    print("total inf: " + str(responses))
+    print("===========")
+
+    return json.dumps(network_output, indent=4), 200
+
 
 def categoriaNSE(nivel):
     return {
