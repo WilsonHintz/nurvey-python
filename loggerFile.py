@@ -7,7 +7,7 @@ class loggerFile:
 
     def __init__(self):
         self.name = "logger"
-        self.fileName = self.base_path + "log.txt"
+        self.fileName = self.base_path + "log-"+datetime.now().strftime("%m-%d-%Y") + ".txt"
 
     @classmethod
     def get_instance(cls):
