@@ -3,7 +3,8 @@ from keras.models import model_from_json
 
 class loadModel:
     instance = None
-    base_path = "/home/nurveyneural/Documentos/NURVEYDEV/nurvey-python/"
+    base_path = "/home/ec2-user/workspace/nurvey-python/"
+    base_path2 = "/home/nurveyneural/Documentos/NURVEYDEV/nurvey-python/"
 
     @classmethod
     def get_instance(cls):
