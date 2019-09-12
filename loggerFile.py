@@ -3,7 +3,8 @@ from _datetime import datetime
 
 class loggerFile:
     instance = None
-    base_path = "/home/nurveyneural/Documentos/NURVEYDEV/nurvey-python/"
+    base_path = "/home/ec2-user/workspace/nurvey-python/"
+    base_path2 = "/home/nurveyneural/Documentos/NURVEYDEV/nurvey-python/"
 
     def __init__(self):
         self.name = "logger"
